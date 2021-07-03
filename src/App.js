@@ -35,20 +35,6 @@ function App() {
     fetchSitemap();
   }, [fetchSitemap]);
   
-  /*
-  useEffect(() =>{   
-      setFilteredUrls(urls.filter(url => {
-        console.log("searchTerm",searchTerm);
-        if (searchTerm == "")
-        return url;
-        else {
-          return (
-            url.loc.toString().includes(searchTerm)
-          );
-        }
-      }));  
-  },[fetchSitemap,urls,searchTerm]);
-*/
   return (
       <>
       <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
