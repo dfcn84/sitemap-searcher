@@ -1,22 +1,23 @@
+import { useState, useEffect, useCallback } from 'react';
 import xml2js from 'xml2js';
 import SearchBar from './searchBar';
 import Sitemap from './sitemap';
 
-import { Component } from 'react';
+function App() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const [urls, setUrls] = useState([]);
 
-class App extends Component {
-  state = {
-    urls: [],
-    searchTerm: ""
-  }
+  const filteredUrls = urls.filter(url => {
+    if (searchTerm === "")
+      return url;
+    else {
+      return (
+        url.loc.toString().includes(searchTerm)
+      );
+    }
+  });
 
-  onSearch = (event) => {
-    let keyword = event.target.value;
-    this.setState({ searchTerm: keyword} )
-  }
-
-
-  componentDidMount() {
+  const fetchSitemap = useCallback(() =>{
     fetch("https://www.smu.edu.sg/sitemap.xml")
     .then(res => res.text())
     .then((data) => {
@@ -26,30 +27,34 @@ class App extends Component {
       parser.parseString(data, function (err, result) {
           jsondata = result;
       }); 
-      this.setState({ urls: jsondata.urlset.url });
+      setUrls(jsondata.urlset.url);
     });
-  }  
+  },[]);
 
-
-  render () {
-    const filteredUrls = this.state.urls.filter(url => {
-      if (this.state.searchTerm == "")
-      return url;
-      else {
-
-        return (
-          url.loc.toString().includes(this.state.searchTerm)
-        );
-      }
-    });
-
-    return (
+  useEffect(() =>{  
+    fetchSitemap();
+  }, [fetchSitemap]);
+  
+  /*
+  useEffect(() =>{   
+      setFilteredUrls(urls.filter(url => {
+        console.log("searchTerm",searchTerm);
+        if (searchTerm == "")
+        return url;
+        else {
+          return (
+            url.loc.toString().includes(searchTerm)
+          );
+        }
+      }));  
+  },[fetchSitemap,urls,searchTerm]);
+*/
+  return (
       <>
-      <SearchBar searchTerm={this.state.searchTerm} onSearch={this.onSearch} />
+      <SearchBar searchTerm={searchTerm} onSearch={setSearchTerm} />
       <Sitemap urls={filteredUrls} />
       </>
     );
-  }  
 
 }
 

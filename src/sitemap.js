@@ -9,7 +9,7 @@ function Sitemap({urls}) {
                     </tr>
                 </thead>
                 <tbody>
-                    { urls.map((url, i) => (
+                { urls.map((url, i) => (
                         <tr key={i}>
                             <td>{url.loc}</td>
                             <td>{url.changefreq}</td>
